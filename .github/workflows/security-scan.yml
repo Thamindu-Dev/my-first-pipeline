@@ -1,15 +1,13 @@
-name: Security Scan (SAST)
+name: Full DevSecOps Pipeline
 
 on:
   push:
     branches: [ "main", "master" ]
-  pull_request:
-    branches: [ "main", "master" ]
 
 jobs:
-  semgrep-scan:
-    name: Run Semgrep Security Scanner
-    runs-on: self-hosted
+  security-scan:
+    name: Run Semgrep SAST
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
@@ -19,3 +17,24 @@ jobs:
         uses: returntocorp/semgrep-action@v1
         with:
           config: "p/default"
+
+  deploy-local:
+    name: Deploy to Local Docker
+    needs: security-scan
+    runs-on: self-hosted 
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Remove Old Container
+        continue-on-error: true
+        run: |
+          docker stop python-app
+          docker rm python-app
+
+      - name: Build New Docker Image
+        run: docker build -t my-secure-app:latest .
+
+      - name: Run New Container
+        run: docker run -d -p 5000:5000 --name python-app my-secure-app:latest
