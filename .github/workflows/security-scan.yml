@@ -9,6 +9,7 @@ on:
 jobs:
   semgrep-scan:
     name: Run Semgrep Security Scanner
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
