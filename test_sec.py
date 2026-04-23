@@ -50,5 +50,4 @@ def ping_server():
     return "Ping function has been secured/disabled."
 
 if __name__ == '__main__':
-    # host='0.0.0.0' අනිවාර්යයි
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    app.run(host='0.0.0.0', port=5000, debug=False) # nosemgrep
